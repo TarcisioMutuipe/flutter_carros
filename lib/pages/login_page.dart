@@ -24,10 +24,23 @@ class _LoginPageState extends State<LoginPage> {
   final _focusSenha = FocusNode();
 
   bool _showProgress = false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    Future<Usuario?> future = Usuario.get();
+    future.then((Usuario? user) {
+      if (user != null) {
+        pushReplace(context, HomePage());
+        setState(() {
+          _tLogin.text = user.login!;
+        });
+      } else {
+        _tLogin.text = "";
+      }
+    });
   }
 
   @override
@@ -72,7 +85,8 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               height: 20,
             ),
-            AppButton("Login", onPressed: _onClickLogin,showProgress: _showProgress),
+            AppButton("Login",
+                onPressed: _onClickLogin, showProgress: _showProgress),
           ],
         ),
       ),
@@ -104,24 +118,22 @@ class _LoginPageState extends State<LoginPage> {
     String senha = _tSenha.text;
 
     print(login + senha);
-    ApiResponse apiUser = await LoginApi.loginToken( login,  senha) ;
+    ApiResponse apiUser = await LoginApi.loginToken(login, senha);
 
-    if(apiUser.ok) {
+    if (apiUser.ok) {
       pushReplace(context, HomePage());
       _tSenha.text = "";
       _tLogin.text = "";
+    } else {
+      Fluttertoast.showToast(
+          msg: apiUser.msg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
-    else
-      {
-        Fluttertoast.showToast(
-            msg: apiUser.msg,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
     setState(() {
       _showProgress = false;
     });

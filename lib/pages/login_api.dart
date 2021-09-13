@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carros/dto/api_response.dart';
 import 'package:carros/dto/usuario.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginApi {
   static Future<bool> login(String login, String senha) async
@@ -41,7 +42,10 @@ class LoginApi {
 
       Map mapResponse = json.decode(response.body);
       if (response.statusCode == 200) {
+        var prefs = await SharedPreferences.getInstance();
         Usuario user = Usuario.fromJson(mapResponse);
+        user.save();
+
         return ApiResponse.ok(user);
       }
       else {

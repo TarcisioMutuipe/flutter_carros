@@ -24,6 +24,7 @@ class AppText extends StatelessWidget {
       controller: controller,
       obscureText: password,
       validator: validator,
+
 //definir tipo de campo que aceita
 //keyboardType: TextInputType.emailAddress,
 //defini aparencia não vi nada
